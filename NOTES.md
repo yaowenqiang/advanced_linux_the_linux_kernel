@@ -280,3 +280,21 @@ done < /lib/modules/$(uname -r)/modules.dep | sort -n
 make -C /lib/modules/$(uanme -r)/build M=$PWD modules
 
 
+### Kernel Headers
+
++ Modules are compiled using kernel, not user space, Headers
++ You need the headers that correspond to your running kernel
++ These headers will include kernel configuration choices
+
+#### write simple module
+
+> sudo apt install --reinstall linux-headers-$(uname -r)
+
+
+> sudo make -C /lib/modules/$(uname -r)/build M=$PWD modules
+> sudo insmod simplemodule.ko
+> sudo rmmod simplemodule.ko
+
+> dmesg
+
+
