@@ -297,4 +297,223 @@ make -C /lib/modules/$(uanme -r)/build M=$PWD modules
 
 > dmesg
 
+## Linux Kernel Source Code
+
+### Obtain a kernel source code
+
+#### Official Kernel Source 
+
++ https://mirrors.edge.kernel.org/pub/linux/kernel/
+
+> wget https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.9.9.tar.xz
+
+> git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+
+#### Ubuntu Kernel Source
+
+
+> cat /etc/lsb-release
+
+> source /etc/lsb-release
+
+> name=$(echo $DISTRIB_CODENAME | tr "[[:upper:]]" "[[:lower:]]" )
+
+
+> git clone git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/$name
+
+
+The Git source may be more than 4GB, it has tags for the different kernel releases, see the Ubuntu Kernel Git guid for more info: https://wiki.ubuntu.com/Kernel/Dev/KernelGitGuide
+
+
+### The Kernel Makefile
+
++ make help
++ make menuconfig and make xconfig
++ All configuration choices are stored in .config after you do a configuration step
++ Current kernel config may by in /boot with a name like config-$(uname -r)
++ Other important target are bzImage, modules, modules_install, install, clean
+
+### Version info in Makefile
+
+
+VERSION = 6
+PATCHLEVEL = 8
+SUBLEVEL = 4
+EXTRAVERSION = 
+NAME = Hur xxx
+
+
+### Make help
+
+#### cleaning targets
+
++ clean: remove most generated files but keep the config
++ mrproper: remove all generated files, config, and various backup files
++ distclean: mrproper, plus removing editor backup and patch files
+
+#### config targets:
+
++ config: update current config utilizing a line-oriented program
++ nconfig: update current config utilizing an ncurses menu-based program
++ menuconfig: update current config utilizing a menu-based program
++ xconfig: update current config utilizing a QT-based front end
++ gconfig: update current config utilizing a GTK-based front end
+
+#### Other generic targets:
+
+
++ all: build all targets marked with [*]
++ vmlinux*: build the bare kernel
++ modules*: build all modules
++ modules_install: install all modules to INSTALL_MOD_PATH(default:/)
+
+Architecture-specific targets(x86)
+
++ bzImage*: compressed kernel image(arch/x86/boot/bzImage)
++ install: install kernel using(your)~/bin/installkernell or (distribution) /sbin/installkernel, or install to $(INSTALL_PATH) and run LILO
+
+make by itself or make all will build the targets marked with an asterisk(*)
+
+## Linux Kernel Source Code Documentation
+
+
+Documentation subdirectory
+
+> grep -rl in Documentation(handy)
+
+
+Example: devices.txt
+
+> Documentation/admin-guide/devices.txt
+
+
+DocBooks
+
+
+
+> make SPHINXDIRS="scheduler" pdfdocs
+
+> make htmldocs
+
+> make SPHINXDIRS="locking" pdfdocs
+
+pdf in Documentation/output/locking/pdf
+
+
+#### Searching
+
+> grep -rli sys_read include
+
+
+#### cscope
+
+> sudo apt install cscope
+
+> make cscope
+
+> cscope -d to launch
+
+move up and down with Tab key
+
+Exit with Ctrl+D
+
+Launches editor, usually vi
+
+
+search for
+
+copy_to_user
+
+
+
+
+#### Tags
+
+
+> sudo apt install universal-ctags
+
+> make tags
+> vi -t <TAG>
+
+> vim -t sys_read
+
+> ctrl + ] on a symbol
+> Ctrl + T to go back
+> :tn (tag next)
+
+> du -ms .
+
+> git tag -l Ubuntu-* | wc -l
+
+#### Drivers
+
+
+net/ethernet
+
+> ip addr # see names of interfaces
+> ethtool -i $interface
+
+char
+
+
+Character drivers include meme.c, the 'memory' driver, which include /dev/null and its siblings
+
+> find  . -name meme.c | grep drivers/char
+
+
+> cat /dev/null
+
+mem.c -> read_null
+
+> echo hi > /dev/null
+
+mem.c -> write_null
+
+
+how to find ethernet's driver code in the kernel
+
+
+> ip addr 
+> ethtool -i $interface
+
+get driver: e1000e like this
+
+in /kernel/linux-6.9.9/drivers/net/ethernet dir
+
+> fdfind  e1000e
+
+
+#### Selected directories
+
+##### include
+
++ Kernel code does not use files from /usr/include
++ Some files in /usr/include, such as some needed by glibc, are derived from kernel include files ,though
+
+
+##### fs
+
+Linux has a wide variety of file systems
+
++ Virtual(proc and sys)
++ On-disk(ext{2,3,4}, btrfs, and xfs)
++ Network(nfs)
++ compatible(ntfs, fat, and hfs)
+
+##### arch
+
+
+##### security
+
++ security.c provides the fundamental hooks that SELinux, AppArmor, and other security systems use
++ security.c essentially provides a hook into all system calls so that extra checks can be made
++ The kernel portions of SELinux and AppArmor are also in the security directory
+
+find defination of the two functions
+
+> write_zero
+> read_zero
+
+
+
 
